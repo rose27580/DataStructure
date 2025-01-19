@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a doubly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the doubly linked list
+void insertAtHead(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL) {
+        (*head)->prev = newNode;
+    }
+    *head = newNode;
+}
+
+// Function to delete a node from the doubly linked list
+void deleteNode(struct Node** head, struct Node* del) {
+    if (*head == NULL || del == NULL) {
+        return;
+    }
+    if (*head == del) {
+        *head = del->next;
+    }
+    if (del->next != NULL) {
+        del->next->prev = del->prev;
+    }
+    if (del->prev != NULL) {
+        del->prev->next = del->next;
+    }
+    free(del);
+}
+
+// Function to search for a node in the doubly linked list
+struct Node* searchNode(struct Node* head, int key) {
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data == key) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+// Function to print the doubly linked list
+void printList(struct Node* node) {
+    struct Node* last;
+    while (node != NULL) {
+        printf("%d ", node->data);
+        last = node;
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtHead(&head, 1);
+    insertAtHead(&head, 2);
+    insertAtHead(&head, 3);
+
+    printf("Doubly linked list: ");
+    printList(head);
+
+    struct Node* nodeToDelete = searchNode(head, 2);
+    if (nodeToDelete != NULL) {
+        deleteNode(&head, nodeToDelete);
+    }
+
+    printf("After deletion: ");
+    printList(head);
+
+    struct Node* searchedNode = searchNode(head, 3);
+    if (searchedNode != NULL) {
+        printf("Node with value 3 found.\n");
+    } else {
+        printf("Node with value 3 not found.\n");
+    }
+
+    return 0;
+}
